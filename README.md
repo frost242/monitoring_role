@@ -14,6 +14,7 @@ select * from pg_ls_dir('.');
 create schema monitoring;
 create extension monitoring_role schema monitoring;
 select monitoring.grant_monitor('monitor');
+ALTER ROLE monitor SET search_path = monitoring, pg_catalog, public;
 \c monitoring monitor
 select * from pg_ls_dir('.');
 \q
