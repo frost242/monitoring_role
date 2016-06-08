@@ -71,6 +71,23 @@ SECURITY DEFINER;
 
 REVOKE EXECUTE ON FUNCTION @extschema@.pg_read_file(text) FROM PUBLIC;
 
+CREATE FUNCTION @extschema@.pg_read_file(p_filename text, p_offset bigint, p_length bigint)
+RETURNS text
+LANGUAGE plpgsql
+AS $func$
+BEGIN
+  IF p_filename = 'PG_VERSION' THEN
+    RETURN pg_catalog.pg_read_file('PG_VERSION', p_offset, p_length);
+  ELSE
+    RAISE EXCEPTION 'Must be superuser to read files';
+  END IF;
+END;
+$func$
+SECURITY DEFINER;
+
+REVOKE EXECUTE ON FUNCTION @extschema@.pg_read_file(text, bigint, bigint) FROM PUBLIC;
+
+
 /* fonction complètement pourrie, à revoir */
 CREATE FUNCTION @extschema@.grant_monitor(p_username text)
 RETURNS text
@@ -91,6 +108,8 @@ BEGIN
           '.pg_stat_file(text) TO ' || quote_ident(p_username);
   EXECUTE 'GRANT EXECUTE ON FUNCTION ' || quote_ident(schema_name) ||
           '.pg_read_file(text) TO ' || quote_ident(p_username);
+  EXECUTE 'GRANT EXECUTE ON FUNCTION ' || quote_ident(schema_name) ||
+          '.pg_read_file(text, bigint, bigint) TO ' || quote_ident(p_username);
   RETURN 'Done';
 END;
 $func$
