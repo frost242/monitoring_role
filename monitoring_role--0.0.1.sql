@@ -15,8 +15,6 @@
 \echo Use "CREATE EXTENSION monitoring_role" to load this file. \quit
 
 
---CREATE SCHEMA IF NOT EXISTS @extschema@;
-
 -- provide a complete pg_stat_activity view
 CREATE FUNCTION @extschema@.pg_stat_activity ()
 RETURNS SETOF pg_catalog.pg_stat_activity
@@ -28,14 +26,11 @@ SECURITY DEFINER;
 
 REVOKE EXECUTE ON FUNCTION @extschema@.pg_stat_activity() FROM PUBLIC;
 
-CREATE OR REPLACE VIEW @extschema@.pg_stat_activity
+CREATE VIEW @extschema@.pg_stat_activity
 AS SELECT * FROM @extschema@.pg_stat_activity();
 
--- pg_stat_bgwriter
--- pg_settings
-
 -- provide pg_ls_dir function
-CREATE OR REPLACE FUNCTION @extschema@.pg_ls_dir (text)
+CREATE FUNCTION @extschema@.pg_ls_dir (text)
 RETURNS SETOF text
 LANGUAGE SQL
 AS $func$
@@ -46,7 +41,7 @@ SECURITY DEFINER;
 REVOKE EXECUTE ON FUNCTION @extschema@.pg_ls_dir(text) FROM PUBLIC;
 
 -- pg_stat_file
-CREATE OR REPLACE FUNCTION @extschema@.pg_stat_file (filename text,
+CREATE FUNCTION @extschema@.pg_stat_file (filename text,
        	OUT size bigint, OUT access timestamp with time zone,
         OUT modification timestamp with time zone, OUT change timestamp with time zone,
         OUT creation timestamp with time zone, OUT isdir boolean)
@@ -77,7 +72,7 @@ SECURITY DEFINER;
 REVOKE EXECUTE ON FUNCTION @extschema@.pg_read_file(text) FROM PUBLIC;
 
 /* fonction complètement pourrie, à revoir */
-CREATE OR REPLACE FUNCTION @extschema@.grant_monitor(p_username text)
+CREATE FUNCTION @extschema@.grant_monitor(p_username text)
 RETURNS text
 LANGUAGE plpgsql
 AS $func$
