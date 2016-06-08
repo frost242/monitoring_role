@@ -7,6 +7,8 @@
  * After installation is done, please modify the configuration for the monitoring
  * user as :
  * ALTER ROLE monitoring SET search_path = monitoring, pg_catalog, public;
+ * Replace "monitoring" with the schema name where you installed the extension.
+ * It is advised to install the extension into a dedicated schema.
  *
  * Adapt this query to your context.
  */
